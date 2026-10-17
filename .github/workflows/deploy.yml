@@ -1,0 +1,92 @@
+# Builds hlcharts.com and uploads it to Cloudflare Pages.
+#
+# Written in coin-trader's web/ and copied to the root of the hlcharts-web
+# repository by coin-trader's sync-web workflow; GitHub runs it only there.
+# Any failing step stops the deploy, and the live site stays as it was.
+#
+# Secrets (hlcharts-web repository settings):
+#   CLOUDFLARE_API_TOKEN   an API token with Account > Cloudflare Pages > Edit only
+#   CLOUDFLARE_ACCOUNT_ID  the Cloudflare account the Pages project belongs to
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  # Daily, so a market listed since the last push gets its page and the
+  # sitemaps list it (docs/hlcharts-website.md §3.7).
+  schedule:
+    - cron: '23 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+env:
+  PAGES_PROJECT: hlcharts
+  # Pinned, and a week old when chosen, like every other package here.
+  WRANGLER: wrangler@4.149.0
+  WRANGLER_SEND_METRICS: 'false'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+
+      - run: npm ci
+
+      - name: test
+        run: npm test
+
+      # Fetches the market list from Hyperliquid, so a page exists for every
+      # market listed today.
+      - name: build
+        run: npm run build
+
+      # After the build, which writes next-env.d.ts and the route types.
+      - name: typecheck
+        run: npm run typecheck
+
+      # The pre-launch site carries no vault pages, chart ids or methodology
+      # anchors (docs/hlcharts-website.md §3.7). It matches ids and paths, not
+      # the word: VAULT/USDC is a spot market, at /spot/vault-usdc/.
+      - name: no vault code in the output
+        run: |
+          if grep -rlE 'vault\.[a-z]|#vault|id="vault|"id":"vault|href="/vaults?/|"href":"/vaults?/' out; then
+            echo '::error::the build contains vault pages, chart ids or anchors; they stay out until launch'
+            exit 1
+          fi
+
+      # Wrangler's own deploy cannot create a project when no one is there to
+      # answer its prompt, so the first run creates it. 8000007 is the API's
+      # "project not found", the same code wrangler checks for.
+      - name: create the Pages project on the first run
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          body=$(curl -sS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/$PAGES_PROJECT")
+          if jq -e '.success == true' <<<"$body" > /dev/null; then
+            echo "Pages project $PAGES_PROJECT exists"
+          elif jq -e 'any(.errors[]?; .code == 8000007)' <<<"$body" > /dev/null; then
+            npx --yes "$WRANGLER" pages project create "$PAGES_PROJECT" --production-branch=main
+          else
+            jq '.errors' <<<"$body"
+            exit 1
+          fi
+
+      - name: upload
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx --yes "$WRANGLER" pages deploy out --project-name="$PAGES_PROJECT" --branch=main

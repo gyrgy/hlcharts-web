@@ -1,0 +1,221 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import './shadcn.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-heading: var(--font-sans);
+  --color-link: var(--link);
+  --color-positive: var(--positive);
+  --color-warning: var(--warning);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/*
+ * The site's own colours, next to shadcn's: links, the live/warning states,
+ * and the axes and grid of canvas charts (lib/charts/use-uplot.ts reads
+ * --chart-axis and --chart-grid, so they stay in a form a canvas accepts).
+ */
+:root {
+  color-scheme: light;
+  --link: oklch(0.488 0.217 264);
+  --positive: oklch(0.527 0.154 150);
+  --warning: oklch(0.555 0.163 49);
+  --chart-axis: #52525b;
+  --chart-grid: rgba(0, 0, 0, 0.08);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  color-scheme: dark;
+  --link: oklch(0.707 0.165 254.624);
+  --positive: oklch(0.723 0.219 149.579);
+  --warning: oklch(0.769 0.188 70.08);
+  --chart-axis: #a1a1aa;
+  --chart-grid: rgba(255, 255, 255, 0.1);
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    line-height: 1.5;
+  }
+
+  /*
+   * Page content is plain HTML written against the browser's defaults:
+   * Tailwind's reset removes them, these bring them back in the site's look.
+   * Plain element selectors, so they win over the reset's own element rules; in
+   * the base layer, so any utility class on an element still wins over them.
+   */
+  h1 {
+    @apply mt-6 mb-3 text-2xl font-semibold tracking-tight md:text-3xl;
+  }
+  h2 {
+    @apply mt-10 mb-3 text-xl font-semibold tracking-tight;
+  }
+  h3 {
+    @apply mt-6 mb-2 text-base font-semibold;
+  }
+  p,
+  dl,
+  details {
+    @apply my-3;
+  }
+  ul:not([role]) {
+    @apply my-3 list-disc pl-6;
+  }
+  dt {
+    @apply font-semibold;
+  }
+  dd {
+    @apply mb-2 ml-6;
+  }
+  summary {
+    @apply cursor-pointer;
+  }
+  a {
+    @apply text-link underline-offset-2 hover:underline;
+  }
+  code {
+    @apply rounded bg-muted px-1 py-0.5 font-mono text-[0.85em];
+  }
+  table {
+    font-variant-numeric: tabular-nums;
+  }
+  th {
+    @apply font-medium text-muted-foreground;
+  }
+  button:not([data-slot]) {
+    @apply inline-flex cursor-pointer items-center justify-center gap-1 rounded-md border border-border bg-background px-2.5 py-1 text-sm font-medium transition-colors hover:bg-muted disabled:cursor-default disabled:opacity-50 disabled:hover:bg-background;
+  }
+  select,
+  textarea,
+  input:not([type='checkbox'], [type='radio']) {
+    @apply rounded-md border border-input bg-background px-2 py-1 text-sm;
+  }
+  input[type='checkbox'],
+  input[type='radio'] {
+    accent-color: var(--primary);
+  }
+  /*
+   * SVG text without its own colour is drawn black, which vanishes on the dark
+   * theme. A snapshot PNG serialises the SVG without this sheet, so it stays
+   * black on the snapshot's white.
+   */
+  svg text:not([fill]) {
+    fill: currentColor;
+  }
+}
+
+/* uPlot tints a drag-to-zoom selection black; on the dark theme, white. */
+.dark .u-select {
+  background: rgba(255, 255, 255, 0.1);
+}

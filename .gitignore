@@ -1,0 +1,8 @@
+# For the hlcharts-web repository, which has only this folder. In coin-trader
+# the root .gitignore covers the same paths.
+node_modules/
+.next/
+out/
+.tmp/
+*.tsbuildinfo
+next-env.d.ts
