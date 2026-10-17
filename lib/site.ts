@@ -1,11 +1,11 @@
 /** Site-wide settings. */
 export const SITE_URL = 'https://hlcharts.com';
 /**
- * False until the first public deploy: every page carries noindex. Pages still
- * compute whether they WOULD be indexed (spot pairs under the volume floor are
- * not), so switching this on is the only change at release.
+ * True since 2026-10-17 (owner): pages may be indexed. Each page still decides
+ * for itself (spot pairs under the volume floor, embeds and the development
+ * pages stay noindex). False puts noindex on every page.
  */
-export const SITE_PUBLIC = false;
+export const SITE_PUBLIC = true;
 /** The site's contact address (owner, 2026-10-16), routed by Cloudflare Email Routing once the domain is set up. */
 export const CONTACT_EMAIL = 'hello@hlcharts.com';
 /**
