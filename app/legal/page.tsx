@@ -21,7 +21,7 @@ export const metadata: Metadata = pageMetadata({
 });
 
 /** When this page's statements last changed. */
-const UPDATED = '2026-10-16';
+const UPDATED = '2026-10-17';
 const HL_PRIVACY = 'https://app.hyperliquid.xyz/privacypolicy';
 const CF_PRIVACY = 'https://www.cloudflare.com/privacypolicy/';
 const AP = 'https://autoriteitpersoonsgegevens.nl';
@@ -72,7 +72,10 @@ export default function LegalPage() {
       <ul>
         <li>
           <b>Cloudflare</b> (Cloudflare, Inc.) delivers the pages and counts visits with Cloudflare
-          Web Analytics, which uses no cookies and nothing stored in your browser. See{' '}
+          Web Analytics, which uses no cookies and nothing stored in your browser. If
+          Cloudflare&apos;s protection suspects a visit is automated, it may ask the visitor to pass
+          a check and then set a cookie (<code>cf_clearance</code>) recording that it was passed; it
+          is needed for security and not used to follow you. See{' '}
           <a href={CF_PRIVACY}>Cloudflare&apos;s privacy policy</a>.
         </li>
         <li>

@@ -12,6 +12,11 @@
  *                    Hyperliquid's per-IP limit (default 0)
  *   --click="21 days"     after loading, press the button or tab with that text, wait
  *                         again and check again (repeatable, in order)
+ *   --site=https://hlcharts.pages.dev   open a deployed site instead of out/
+ *
+ * Any cookie the browser ends up holding, from the site or anything it loads,
+ * is reported as an issue: /legal says there are none. What the page keeps in
+ * local and session storage is listed, for comparing with /legal.
  *
  * The site is served from out/ through request interception (no local
  * server), and live data comes from Hyperliquid itself. Chromium is Chrome for
@@ -63,8 +68,11 @@ const waitMs = Number(flag('wait', '12')) * 1000;
 const gapMs = Number(flag('gap', '0')) * 1000;
 const only = flag('only', '');
 const clicks = args.filter((a) => a.startsWith('--click=')).map((a) => a.slice('--click='.length));
+const site = args.find((a) => a.startsWith('--site='))?.slice('--site='.length).replace(/\/$/, '');
+const origin = site ?? ORIGIN;
 if (!pages.length) throw new Error('name at least one page, e.g. /funding/');
-if (!existsSync(join(OUT, 'index.html'))) throw new Error(`no build in ${OUT}: run a build first`);
+if (!site && !existsSync(join(OUT, 'index.html')))
+  throw new Error(`no build in ${OUT}: run a build first`);
 if (!existsSync(CHROME)) throw new Error(`no Chromium at ${CHROME} (set CHROME_PATH)`);
 
 /** out/ file for a site path: /funding/ -> funding/index.html, assets as they are. */
@@ -101,25 +109,30 @@ for (const view of VIEWS.filter((v) => !only || v.name === only)) {
     hasTouch: view.mobile,
     colorScheme: view.scheme,
   });
-  await context.route(`${ORIGIN}/**`, (route) => {
-    const file = fileFor(new URL(route.request().url()).pathname);
-    if (!file) return route.fulfill({ status: 404, body: 'not in out/' });
-    return route.fulfill({
-      status: 200,
-      body: readFileSync(file),
-      contentType: TYPES[extname(file)] ?? 'application/octet-stream',
+  if (!site)
+    await context.route(`${ORIGIN}/**`, (route) => {
+      const file = fileFor(new URL(route.request().url()).pathname);
+      if (!file) return route.fulfill({ status: 404, body: 'not in out/' });
+      return route.fulfill({
+        status: 200,
+        body: readFileSync(file),
+        contentType: TYPES[extname(file)] ?? 'application/octet-stream',
+      });
     });
-  });
+  const cookiesSeen = new Set();
   for (const path of pages) {
     const page = await context.newPage();
     const issues = [];
     page.on('console', (m) => m.type() === 'error' && issues.push(`console: ${m.text()}`));
     page.on('pageerror', (e) => issues.push(`uncaught: ${e.message}`));
-    page.on('requestfailed', (r) =>
-      issues.push(`request failed: ${r.url()} (${r.failure()?.errorText})`)
-    );
+    page.on('requestfailed', (r) => {
+      // Next.js prefetches a link by requesting its page, reading the headers
+      // and cancelling, then fetching the page's .txt data: not a failure.
+      if (r.url().startsWith(origin) && r.failure()?.errorText === 'net::ERR_ABORTED') return;
+      issues.push(`request failed: ${r.url()} (${r.failure()?.errorText})`);
+    });
     page.on('response', (r) => r.status() >= 400 && issues.push(`HTTP ${r.status()}: ${r.url()}`));
-    await page.goto(`${ORIGIN}${path}`, { waitUntil: 'load' });
+    await page.goto(`${origin}${path}`, { waitUntil: 'load' });
     const base = path.replace(/\W+/g, '-').replace(/^-|-$/g, '') || 'home';
     for (const step of ['', ...clicks]) {
       if (step)
@@ -166,6 +179,15 @@ for (const view of VIEWS.filter((v) => !only || v.name === only)) {
         issues.push(`page scrolls sideways by ${overflow}px: ${culprits.join(' | ')}`);
       }
       for (const line of stuck) issues.push(`on screen: ${line.trim().slice(0, 160)}`);
+      for (const c of await context.cookies()) {
+        const key = `${c.name} on ${c.domain}`;
+        if (!cookiesSeen.has(key)) issues.push(`cookie: ${key}`);
+        cookiesSeen.add(key);
+      }
+      const stored = await page.evaluate(() => ({
+        local: Object.keys(localStorage),
+        session: Object.keys(sessionStorage),
+      }));
       const tag = step ? `-${step.replace(/\W+/g, '-')}` : '';
       const shot = join(SHOTS, `${base}${tag}-${view.name}.png`);
       await page.screenshot({ path: shot, fullPage: true });
@@ -176,6 +198,9 @@ for (const view of VIEWS.filter((v) => !only || v.name === only)) {
         `${view.name} ${path}${step ? ` after "${step}"` : ''}: ${issues.length ? `${issues.length} issue(s)` : 'ok'} -> ${shot}`
       );
       for (const i of issues) console.log(`  - ${i}`);
+      console.log(
+        `  stored: local [${stored.local.join(', ')}], session [${stored.session.join(', ')}]`
+      );
       issues.length = 0;
     }
     await page.close();
