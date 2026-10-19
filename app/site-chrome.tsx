@@ -49,8 +49,9 @@ export function SiteChrome({ children }: { children: ReactNode }) {
           <NavLinks layout="tabs" />
         </nav>
       </header>
-      {/* Each page brings its own <main>. */}
-      <div className={`${FRAME} flex-1 pb-12`}>{children}</div>
+      {/* Each page brings its own <main>. At least a screen tall, so the footer starts below
+          the fold instead of being pushed down when the live data arrives (layout shift). */}
+      <div className={`${FRAME} min-h-svh flex-1 pb-12`}>{children}</div>
       <footer className="border-t">
         <div
           className={`${FRAME} flex flex-wrap gap-x-5 gap-y-1 py-4 text-xs text-muted-foreground`}
