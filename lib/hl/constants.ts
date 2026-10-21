@@ -1,6 +1,6 @@
 /**
  * Hyperliquid's public API as the site uses it, from the visitor's browser.
- * Formats checked live 2026-10-04 (analysis/web-dev/feed-sample.js).
+ * Formats checked live 2026-10-04 (scripts/hlcharts/feed-sample.js in coin-trader).
  */
 export const HL_INFO_URL = 'https://api.hyperliquid.xyz/info';
 export const HL_WS_URL = 'wss://api.hyperliquid.xyz/ws';
