@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 /**
- * The first build task in docs/hlcharts-website.md §3.2: every phase-1 page
+ * The first build task in docs/hlcharts/hlcharts-website.md §3.2: every phase-1 page
  * rests on these feeds working from a visitor's browser, and they had only
  * been tested from Node.
  */

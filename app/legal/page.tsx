@@ -2,7 +2,7 @@
  * `/legal` (plan §3.3): not investment advice, no affiliation and no referrals,
  * the privacy statement (visitors, and the people whose public wallet
  * addresses the exchange pages show), the licence for charts, and the
- * operator. Decisions behind it: docs/hlcharts-website.md, Build status
+ * operator. Decisions behind it: docs/hlcharts/hlcharts-website.md, Build status
  * (owner, 2026-10-15/16). The build refuses a public site while the operator's
  * name is blank.
  */

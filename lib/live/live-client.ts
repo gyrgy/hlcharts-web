@@ -1,5 +1,5 @@
 /**
- * The tab's one live-data client (docs/hlcharts-website.md §3.2):
+ * The tab's one live-data client (docs/hlcharts/hlcharts-website.md §3.2):
  *  - two connections: one for the all-market feeds every page uses, one for
  *    per-coin feeds (books, trades), so a bad per-coin subscription can never
  *    cut the connection carrying every page's numbers;

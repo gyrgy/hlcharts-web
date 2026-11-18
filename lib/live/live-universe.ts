@@ -7,7 +7,7 @@
  * for a listed, not delisted market. Hyperliquid cuts the WHOLE connection
  * when one of its subscriptions names a market that has gone, which is how the
  * collectors flapped every 15 minutes on settling prediction markets
- * (docs/hlcharts.md §4g); prediction markets (#N) are in neither list, so they
+ * (docs/hlcharts/hlcharts.md §4g); prediction markets (#N) are in neither list, so they
  * are never subscribed.
  */
 import { INFO, MAIN_DEX } from '../hl/constants';

@@ -1,5 +1,5 @@
 /**
- * Limits of the live-data client (docs/hlcharts-website.md §3.2). The
+ * Limits of the live-data client (docs/hlcharts/hlcharts-website.md §3.2). The
  * websocket figures restate the collectors' (src/hlcharts/constants.ts), which
  * were learned the hard way; the site cannot import them, as it will move to
  * its own repository.

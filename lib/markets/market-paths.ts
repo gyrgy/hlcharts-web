@@ -1,5 +1,5 @@
 /**
- * Market page addresses (docs/hlcharts-website.md §2, frozen before the first
+ * Market page addresses (docs/hlcharts/hlcharts-website.md §2, frozen before the first
  * cross-post): lowercase, a fixed type prefix, main perps one segment deep and
  * builder-exchange perps two (`/perps/btc`, `/perps/xyz/nvda`), spot pairs by
  * token names (`/spot/hype-usdc`, or `-<pairIndex>` when two pairs share them).

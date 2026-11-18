@@ -1,5 +1,5 @@
 'use client';
-/** The header's live-data indicator (docs/hlcharts-website.md §3.2): what the visitor is seeing, honestly. */
+/** The header's live-data indicator (docs/hlcharts/hlcharts-website.md §3.2): what the visitor is seeing, honestly. */
 import { LIVE_STATUS } from '@/lib/live/constants';
 import { useLiveClient } from '@/lib/live/use-live-client';
 import { cn } from '@/lib/utils';
